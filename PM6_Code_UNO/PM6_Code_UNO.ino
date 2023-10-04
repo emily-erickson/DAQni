@@ -1,6 +1,6 @@
 #include <SoftwareSerial.h>
 
-SoftwareSerial mySerial(10, 11); // RX, TX
+SoftwareSerial mySerial(2, 3); // RX, TX
 
 void setup()  
 {
@@ -11,7 +11,7 @@ void setup()
   Serial.println("Hello Computer!");
 
   // Open serial communications with the other Arduino board
-  mySerial.begin(9600);
+  mySerial.begin(115200);
 
   // Send a message to the other Arduino board
   mySerial.print("Hello Mother Mega");
@@ -23,7 +23,9 @@ void loop() // run over and over
 // If something is typed into the Serial Monitor, do this:
 if (Serial.available()) {
 // Read it and send it to the other Arduino
-mySerial.println(Serial.readStringUntil('\n'));
+mySerial.write(255);
+mySerial.write(Serial.read());
+// mySerial.println(Serial.readStringUntil('\n'));
 }
 
 // If something is sent from the other Arduino

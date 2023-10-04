@@ -13,7 +13,6 @@
 #include <PWMServo.h>
 
 DualTB9051FTGMotorShield md;
-SoftwareSerial mySerial(10, 11); // RX, TX
 
 /***********************
  ** Global Variables ***
@@ -54,7 +53,7 @@ const int gearMotorSpeed = 46;
 #define dist2 A5         // Rear distance sensor measurement
 
 // *** Create Servo Objects ***
-Servo bottomServo;
+Servo bottomServo; // Servo 1
 Servo midServo;
 Servo magnetServo;
 
@@ -131,13 +130,13 @@ void setup()
   md.flipM2(true);
 
  // ************ SERIAL COMMUNICATION ************* 
-    Serial.begin (115200);
+  Serial.begin (115200);
 
-    // Print a message to the computer through the USB
+ // Print a message to the computer through the USB
   Serial.println("Hello Computer!");
 
   // Open serial communications with the other Arduino board
-  Serial1.begin(9600);
+  Serial1.begin(115200);
 
   // Send a message to the other Arduino board
   Serial1.print("Hello My Child Uno. Mama's Here.");
@@ -150,52 +149,66 @@ void loop()
   // If something is typed into the Serial Monitor, do this:
   if (Serial.available()) {
   // Read it and send it to the other Arduino
-  mySerial.println(Serial.readStringUntil('\n'));
+  Serial1.println(Serial.readStringUntil('\n'));
   }
 
-  // // If a command is sent from the other Arduino
-  //   if (mySerial.available() = drive ) {
-  //   // Read it and display it on the Serial monitor
-  //   Serial.println(mySerial.readStringUntil('\n'));
-  //   // Drive forward
-  //   DriveForward();
+  // If a command is sent from the other Arduino
+  if (Serial1.available()) {
+  // Read it and display it on the Serial monitor
+  Serial.println(Serial1.readStringUntil('\n'));
+  }
+
+ if (Serial.available() > 2) {
+   // If a specific letter  is sent from the computer
+  //   if (Serial.read() == 255) {
+  //     command = Serial.read();   // peice of data is the command
+  //   }
   // }
 
-  // if (mySerial.available() = right ) {
-  //   // Read it and display it on the Serial monitor
-  //   Serial.println(mySerial.readStringUntil('\n'));
-  //   TurnRight();
-  // }
+    if (Serial.read() == drive ) {
+      // Obey it and display it on the Serial monitor
+     Serial.println("Driving Forward");
+     DriveForward();
+    }
+     
+
+   if (Serial.read() == right ) {
+    // Obey it and display it on the Serial monitor
+     Serial.println("Turning Right");
+     TurnRight();
+     }
   
-  // if (mySerial.available() = left ) {
-  //   // Read it and display it on the Serial monitor
-  //   Serial.println(mySerial.readStringUntil('\n'));
-  //   TurnLeft();
-  // }
+   if (Serial.read() == left ) {
+    // Obey it and display it on the Serial monitor
+     Serial.println("Turning Left");
+     TurnLeft();
+     }
 
-  // if (mySerial.available() = base ) {
-  //   // Read it and display it on the Serial monitor
-  //   Serial.println(mySerial.readStringUntil('\n'));
-  //   RotateArmBase();
-  // }
+     if (Serial.read() == base ) {
+    // Obey it and display it on the Serial monitor
+     Serial.println("Rotating Base");
+     RotateArmBase();
+     }
 
-  // if (mySerial.available() = mid ) {
-  //   // Read it and display it on the Serial monitor
-  //   Serial.println(mySerial.readStringUntil('\n'));
-  //   MoveMidServo();
-  // } 
+   if (Serial.read() == mid ) {
+    // Obey it and display it on the Serial monitor
+     Serial.println("Moving Middle Servo");
+     MoveMidServo(100);
+     }
 
-  // if (mySerial.available() = bottom ) {
-  //   // Read it and display it on the Serial monitor
-  //   Serial.println(mySerial.readStringUntil('\n'));
-  //   MoveBottomServo();
-  // }
+   if (Serial.read() == bottom ) {
+    // Obey it and display it on the Serial monitor
+     Serial.println("Moving Bottom Servo");
+     MoveBottomServo(100);
+     }
 
-  // if (mySerial.available() = magnet ) {
-  //   // Read it and display it on the Serial monitor
-  //   Serial.println(mySerial.readStringUntil('\n'));
-  //   MoveMagnetServo();
-  // }
+   if (Serial.read() == magnet ) {
+    // Obey it and display it on the Serial monitor
+     Serial.println("Moving Electromagnet Servo");
+     MoveMagnetServo(100);
+     }
+
+  }
 
   md.enableDrivers();
   delay(1); // wait for drivers to be enabled so fault pins are no longer low
@@ -311,7 +324,9 @@ void TurnLeft (void) {
    }
 }
 
-void RotateArmBase(int turnTime) {
+void RotateArmBase() {
+
+// int turnTime
 
  digitalWrite(gearMotorClock, HIGH);
  digitalWrite(gearMotorCounter, LOW);
